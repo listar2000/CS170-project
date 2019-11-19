@@ -143,9 +143,9 @@ CAR_COST = 1
 WALK_COST = 2/3
 
 """
-TODO: auto-grading scores for a given solution
+FIX: This function is already done in the given skeleton code
 """
-def evaluate_output():
+def evaluate_output(graph, locVisisted, locDict):
     pass
 
 if __name__ == "__main__":
