@@ -1,8 +1,22 @@
 """
 The input parser is written in accordance to the specification at 
 https://cs170.org/assets/project/spec.pdf
+
+input:
+filename <- str: the name of .in file
+
+output:
+numLocations <- int: number of locations in graph
+numHomes <- int: number of homes (TAs) in graph
+locations <- list<str>: the list of locations
+homes <- list<str>: the list of homes
+startlocation <- str: the starting point of the problem
+graph <- Graph: a data-structure that abstracts the graph problem. * See Graph class below
 """
 def read_input(filename):
+    if not filename.endswith('.in'):
+        raise FileNotFoundError('the input file need to end with .in')
+
     with open(filename) as f:
         numLocations = int(f.readline())
         numHomes = int(f.readline())
@@ -12,11 +26,45 @@ def read_input(filename):
 
         adjMatrix = []
         for _ in range(numLocations):
-            adjMatrix.append(list(f.readline().split()))
+            adjMatrix.append(f.readline().split())
         
         graph = Graph(adjMatrix)
     
     return numLocations, numHomes, locations, homes, startLocation, graph
+
+"""
+Similar to read_intput, this is a handy function that helps parse parameters in the output file
+input:
+filename <- str: the name of .out file
+
+output:
+locVisisted <- list<str>: a list of locations that is visited in order by the car
+numDropOff <- int: number of drop-off locations
+locDist <- map<str, list<str>>: map location (where people drop off) to a list of locations (dropped-off people's homes)
+
+doctest:
+>>> t = read_output("sample/demo1.out")
+>>> t
+(['Soda', 'Dwinelle', 'Campanile', 'Barrows', 'Soda'], 3, {'Soda': ['Cory'], 'Dwinelle': ['Wheeler', 'RSF'], 'Campanile': ['Campanile']})
+"""
+def read_output(filename):
+    if not filename.endswith('.out'):
+        raise FileNotFoundError('the input file need to end with .out')
+
+    with open(filename) as f:
+        locVisited = f.readline().split()
+        # check that it's a cycle
+        if locVisited[0] != locVisited[-1]:
+            raise ValueError('the list of locations should form a cycle')
+        numDropOff = int(f.readline())
+
+        locDict = dict()
+        for i in range(numDropOff):
+            line = f.readline().split()
+            locDict[line[0]] = line[1:]
+
+    return locVisited, numDropOff, locDict
+
 
 class Graph(object):
     
@@ -46,22 +94,20 @@ class Graph(object):
         for i in range(length):
             self.shortPath[(i, i)] = 0
 
-       
-
         indirect = dict()
         for i in range(length - 1):
             indirect[i] = []
             for j in range(i + 1, length):
                 if j not in self.neighbors[i]:
                     indirect[i].append(j)
+                    self.shortPath[(i, j)] = float('inf')
                 else:
                     self.shortPath[(i, j)] = self.length(i, j)
         
         for k in range(length):
-            for i in range(length):
+            for i in range(length - 1):
                 for j in indirect[i]:
                     if k != i and k != j:
-                        print(i, j, k)
                         tmpDist = self.shortestDist(i, k) + self.shortestDist(k, j)
                         self.shortPath[(i, j)] = min(self.shortPath[(i, j)], tmpDist)
 
@@ -72,7 +118,7 @@ class Graph(object):
     return None if such edge doesn't exist
     """
     def length(self, u, v):
-        return self.matrix[u][v]
+        return int(self.matrix[u][v])
 
     def getNeighbor(self, u):
         return self.neighbors[u]
@@ -87,10 +133,11 @@ CAR_COST = 1
 WALK_COST = 2/3
 
 """
-auto-grading scores for a given solution
+TODO: auto-grading scores for a given solution
 """
 def evaluate_output():
     pass
 
-graph = read_input("sample/demo1.in")[-1]
-graph.initializeShortestPath()
+if __name__ == "__main__":
+    graph = read_input("sample/demo1.in")[-1]
+    graph.initializeShortestPath()
