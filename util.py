@@ -28,7 +28,7 @@ def read_input(filename):
         for _ in range(numLocations):
             adjMatrix.append(f.readline().split())
         
-        graph = Graph(adjMatrix)
+        graph = Graph(adjMatrix, locations)
     
     return numLocations, numHomes, locations, homes, startLocation, graph
 
@@ -71,10 +71,15 @@ class Graph(object):
     """
     preprocess the adjacancy list and get an dictionary representation
     """
-    def __init__(self, matrix):
+    def __init__(self, matrix, locNames=None):
         self.pathFlag = False
         self.matrix = matrix
         self.neighbors = dict()
+
+        if locNames:
+            self.locNames = dict()
+            for index, locName in enumerate(locNames):
+                self.locNames[locName] = index
 
         for index, row in enumerate(self.matrix):
             self.neighbors[index] = [i for i, j in enumerate(row) if j is not 'x']
@@ -128,6 +133,11 @@ class Graph(object):
             return self.shortPath[(u, v)]
         else:
             return self.shortPath[(v, u)]
+    
+    def shortestDistByName(self, loc1, loc2):
+        u = self.locNames[loc1]
+        v = self.locNames[loc2]
+        return self.shortestDist(u, v)
 
 CAR_COST = 1
 WALK_COST = 2/3
