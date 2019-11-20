@@ -13,10 +13,10 @@ def rand_locations(n, length):
     return list(locs)
 
 DEFAULT_CONFIG = {
-    "file_name" : "./sample/demo2.in",
+    "file_name" : "./sample/50.in",
     "loc_num" : 40,
     "home_num" : 20,
-    "connectivity" : 0.5, 
+    "connectivity" : 0.3, 
     "rand_method" : rand_locations
 }
 

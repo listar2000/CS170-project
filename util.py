@@ -1,3 +1,4 @@
+import numpy as np
 """
 The input parser is written in accordance to the specification at 
 https://cs170.org/assets/project/spec.pdf
@@ -22,7 +23,7 @@ def read_input(filename):
         numHomes = int(f.readline())
         locations = f.readline().split()
         homes = f.readline().split()
-        startLocation = f.readline()
+        startLocation = f.readline().split()[0]
 
         adjMatrix = []
         for _ in range(numLocations):
@@ -123,7 +124,7 @@ class Graph(object):
     return None if such edge doesn't exist
     """
     def length(self, u, v):
-        return int(self.matrix[u][v])
+        return float(self.matrix[u][v])
 
     def getNeighbor(self, u):
         return self.neighbors[u]
