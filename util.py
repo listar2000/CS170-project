@@ -77,6 +77,8 @@ class Graph(object):
         self.matrix = matrix
         self.neighbors = dict()
 
+        self.names = locNames
+
         if locNames:
             self.locNames = dict()
             for index, locName in enumerate(locNames):
@@ -139,6 +141,9 @@ class Graph(object):
         u = self.locNames[loc1]
         v = self.locNames[loc2]
         return self.shortestDist(u, v)
+    
+    def indexToName(self, i):
+        return self.names[i]
 
 CAR_COST = 1
 WALK_COST = 2/3
@@ -150,5 +155,5 @@ def evaluate_output(graph, locVisisted, locDict):
     pass
 
 if __name__ == "__main__":
-    graph = read_input("sample/demo1.in")[-1]
+    graph = read_input("sample/100.in")[-1]
     graph.initializeShortestPath()
